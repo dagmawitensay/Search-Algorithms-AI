@@ -50,6 +50,16 @@ class Graph:
                     self.graph[node].remove(neighbor)
         
         del self.graph[node_A]
+    
+    def generate_random_graph(n, p):
+        graph = {}
+        nodes = list(range(n))
+        for i in range(n):
+            graph[i] = []
+            for j in range(n):
+                if i != j and random.random() < p:
+                    graph[i].append(j)
+        return graph
 
     def depthFirstSearch(self):
         visited = set()
