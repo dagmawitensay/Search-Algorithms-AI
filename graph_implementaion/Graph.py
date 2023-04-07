@@ -14,7 +14,7 @@ class Graph:
     def __init__(self):
         self.graph = {}
     
-    def createNode(self, node, cost=1):
+    def createNode(self, node):
         """
         Create a node in the graph
         """
@@ -24,6 +24,12 @@ class Graph:
         """
         Insert Edge between node_A and node_B
         """
+
+        if not node_A in self.graph:
+            self.createNode(node_A)
+        if not node_B in self.graph:
+            self.createNode(node_B)
+        
         self.graph[node_A].append((node_B, cost))
         self.graph[node_B].append((node_A, cost))
     
@@ -54,6 +60,7 @@ class Graph:
         A function that traverses the graph in depth first manner
         """
         visited.add(start)
+        print(start)
         for neigbor in self.graph[start]:
             if neigbor[0] not in visited:
                 visited.add(neigbor[0])
@@ -71,6 +78,7 @@ class Graph:
 
         while queue:
             current = queue.popleft()
+            print(current)
             for neigbor in self.graph[current]:
                 if neigbor[0] not in visited:
                     visited.add(neigbor[0])
@@ -104,7 +112,37 @@ def Heuristic(node_A, node_B):
     # calculate the result
     distance = c * r
 
-    print(distance)
+    return distance
+
+
 
 if __name__=="__main__":
     print()
+    a = Graph()
+    a.insertEdge('Oradea','Sibiu', 151 )
+    a.insertEdge('Oradea','Zerind', 71)
+    a.insertEdge('Zerind','Arad', 75)
+    a.insertEdge('Arad','Sibiu', 140)
+    a.insertEdge('Arad','Timisoara', 118)
+    a.insertEdge('Sibiu','Fagaras', 99)
+    a.insertEdge('Sibiu','Rimnicu Vilcea', 80)
+    a.insertEdge('Timisoara','Lugoj', 111)
+    a.insertEdge('Lugoj','Mehadia', 70)
+    a.insertEdge('Mehadia','Drobeta', 75)
+    a.insertEdge('Drobeta','Craiova', 120)
+    a.insertEdge('Craiova','Pitesti', 138)
+    a.insertEdge('Rimnicu Vilcea','Pitesti', 97)
+    a.insertEdge('Rimnicu Vilcea', 'Craiova', 146)
+    a.insertEdge('Fagaras', 'Bucharest', 211)
+    a.insertEdge('Pitesti', 'Bucharest', 101)
+    a.insertEdge('Bucharest', 'Urziceni', 85)
+    a.insertEdge('Bucharest', 'Giurgiu', 90)
+    a.insertEdge('Urziceni', 'Hirsova', 98)
+    a.insertEdge('Urziceni', 'Vaslui', 142)
+    a.insertEdge('Hirsova', 'Eforie', 86)
+    a.insertEdge('Vaslui', 'Iasi', 92)
+    a.insertEdge('Iasi', 'Neamt', 87)
+    print(a.graph)
+    # a.breadthFirstSearch()
+    a.depthFirstSearch()
+
