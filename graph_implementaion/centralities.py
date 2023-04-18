@@ -53,25 +53,6 @@ def katz_centrality(adj_matrix, alpha=0.1, beta=1.0, max_iter=1000, tol=1e-6):
 
 
 def pagerank(M, num_iterations: int = 100, d: float = 0.85):
-    """PageRank algorithm with explicit number of iterations. Returns ranking of nodes (pages) in the adjacency matrix.
-
-    Parameters
-    ----------
-    M : numpy array
-        adjacency matrix where M_i,j represents the link from 'j' to 'i', such that for all 'j'
-        sum(i, M_i,j) = 1
-    num_iterations : int, optional
-        number of iterations, by default 100
-    d : float, optional
-        damping factor, by default 0.85
-
-    Returns
-    -------
-    numpy array
-        a vector of ranks such that v_i is the i-th rank from [0, 1],
-        v sums to 1
-
-    """
     M = np.array(M)
     N = M.shape[1]
     v = np.ones(N) / N
@@ -79,6 +60,35 @@ def pagerank(M, num_iterations: int = 100, d: float = 0.85):
     for i in range(num_iterations):
         v = M_hat @ v
     return v
+
+def floyd_warshall(adj_matrix):
+    n = len(adj_matrix)
+    dist = [[float('inf') if i != j and adj_matrix[i][j] == 0 else adj_matrix[i][j] for j in range(n)] for i in range(n)]
+    
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+    
+    return dist
+
+def closeness_centrality(adj_matrix):
+    dist_matrix = floyd_warshall(adj_matrix)
+    n = len(adj_matrix)
+    centralities = []
+    
+    for i in range(n):
+        reachable_nodes = sum(1 for d in dist_matrix[i] if d != float('inf') and d != 0)
+        total_distance = sum(d for d in dist_matrix[i] if d != float('inf') and d != 0)
+        
+        if total_distance == 0:
+            centralities.append(0.0)
+        else:
+            centralities.append(reachable_nodes / total_distance)
+    
+    return centralities
+
+
 
 graph = nx.Graph()
 a = Graph()
@@ -105,24 +115,3 @@ a.insertEdge('Urziceni', 'Vaslui', 142)
 a.insertEdge('Hirsova', 'Eforie', 86)
 a.insertEdge('Vaslui', 'Iasi', 92)
 a.insertEdge('Iasi', 'Neamt', 87)
-
-adj_matrix, nodes = adj_list_to_matrix(a.graph)
-g2 = nx.Graph()
-for i in range(len(adj_matrix)):
-    for j in range(i+1, len(adj_matrix[i])):
-        if adj_matrix[i][j] != 0:
-            g2.add_edge(i, j)
-# print(adj_list_to_matrix(a.graph))
-print(nx.eigenvector_centrality(g2),"using nx")
-print(eigenvector_centrality(adj_matrix))
-
-print(nx.katz_centrality(g2), "using nx for katz")
-print(katz_centrality(adj_matrix))
-
-print(pagerank(adj_matrix),"page rank")
-# centrality_scores = nx.katz_centrality(adj_matrix)
-# print(centrality_scores, "katz fist")
-
-# print(eigenvector_centrality(adj_list_to_matrix(a.graph)))
-# print(katz_centrality(adj_list_to_matrix(a.graph)), "katz")
-# print(nx.eigenvector_centrality(graph))
